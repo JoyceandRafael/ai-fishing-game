@@ -1,1 +1,1 @@
-cast
+cast 10
