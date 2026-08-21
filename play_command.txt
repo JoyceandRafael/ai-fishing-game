@@ -1,1 +1,1 @@
-shop
+buy basic_worm 10; cast 10
