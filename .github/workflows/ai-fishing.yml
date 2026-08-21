@@ -1,0 +1,38 @@
+name: 阿辞鱼塘
+
+on:
+  push:
+    paths:
+      - 'play_command.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  fish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run fishing command
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import fishing
+          from pathlib import Path
+          command = Path('play_command.txt').read_text(encoding='utf-8').strip()
+          result = fishing.cmd(command)
+          Path('last_result.txt').write_text(result + '\n', encoding='utf-8')
+          print(result)
+          PY
+
+      - name: Save game state
+        shell: bash
+        run: |
+          git config user.name 'ai-fishing-bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add play_command.txt last_result.txt
+          git add -f fishing_save.json
+          git commit -m '🎣 阿辞鱼塘：执行钓鱼指令' || exit 0
+          git push
